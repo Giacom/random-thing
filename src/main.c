@@ -25,83 +25,83 @@ Texture2D loadedTexture;
 
 void Update()
 {
-    droppedFiles = GetDroppedFiles(&droppedFilesCount);
+	droppedFiles = GetDroppedFiles(&droppedFilesCount);
 
-    if (droppedFilesCount > 0) {
-        char *filePath = droppedFiles[0];
-        Image loadedImage = LoadImage(filePath);
+	if (droppedFilesCount > 0) {
+		char *filePath = droppedFiles[0];
+		Image loadedImage = LoadImage(filePath);
 
-        char title[255] = "Shader Canvas: ";
-        strncat(title, filePath, 255);
+		char title[255] = "Shader Canvas: ";
+		strncat(title, filePath, 255);
 
-        CloseWindow();
+		CloseWindow();
 
-        currentWindowWidth = loadedImage.width + sidePanelWidth;
-        currentWindowHeight = MAX(loadedImage.height, sidePanelHeight);
+		currentWindowWidth = loadedImage.width + sidePanelWidth;
+		currentWindowHeight = MAX(loadedImage.height, sidePanelHeight);
 
-        InitWindow(currentWindowWidth, currentWindowHeight, title);
+		InitWindow(currentWindowWidth, currentWindowHeight, title);
 
-        loadedTexture = LoadTextureFromImage(loadedImage);
-        UnloadImage(loadedImage);
+		loadedTexture = LoadTextureFromImage(loadedImage);
+		UnloadImage(loadedImage);
 
-        ClearDroppedFiles();
-    }
+		ClearDroppedFiles();
+	}
 
-    int i = 0;
-    while(GetButton(i) != NULL) {
-        UpdateButton(GetButton(i++));
-    }
+	int i = 0;
+	while(GetButton(i) != NULL) {
+		UpdateButton(GetButton(i++));
+	}
 }
 
 void Draw()
 {
-    char* message = "DRAG AND DROP YOUR IMAGE HERE";
+	char* message = "DRAG AND DROP YOUR IMAGE HERE";
 
-    if (!loadedTexture.id) {
-        DrawText(message, sidePanelWidth + mainScreenWidth / 2 - (20 * 16), mainScreenHeight / 2, 28, BLACK);
-    }
+	if (!loadedTexture.id) {
+		DrawText(message, sidePanelWidth + mainScreenWidth / 2 - (20 * 16), mainScreenHeight / 2, 28, BLACK);
+	}
 
-    DrawRectangleGradient(0, 0, sidePanelWidth, currentWindowHeight, DARKGRAY, GRAY);
+	DrawRectangleGradient(0, 0, sidePanelWidth, currentWindowHeight, DARKGRAY, GRAY);
 
-    int i = 0;
-    while(GetButton(i) != NULL) {
-        DrawButton(GetButton(i++));
-    }
+	int i = 0;
+	while(GetButton(i) != NULL) {
+		DrawButton(GetButton(i++));
+	}
 
-    if (shader.id) {
-        BeginShaderMode(shader);
-    }
-    DrawTexture(loadedTexture, sidePanelWidth, 0, WHITE);
-    if (shader.id) {
-        EndShaderMode();
-    }
+	if (shader.id) {
+		BeginShaderMode(shader);
+	}
+	DrawTexture(loadedTexture, sidePanelWidth, 0, WHITE);
+	if (shader.id) {
+		EndShaderMode();
+	}
 }
 
 int counter = 0;
 
 void TestButton(Button *button)
 {
-    SetButtonLabel(button, FormatText("%i", ++counter));
+	SetButtonLabel(button, FormatText("%i", ++counter));
 }
 
 int main()
 {
-    InitWindow(mainScreenWidth, mainScreenHeight, windowTitle);
+	InitWindow(mainScreenWidth, mainScreenHeight, windowTitle);
 	SetTargetFPS(60);
 
-    // Buttons
-    CreateButton("Export", 8, 8, sidePanelWidth - 16, 20, TestButton);
+	// Buttons
+	CreateButton("Export", 8, 8, sidePanelWidth - 16, 20, TestButton);
 
-    while (!WindowShouldClose()) {
-        Update();
+	while (!WindowShouldClose()) {
+		Update();
 
-        // Draw
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        Draw();
-        EndDrawing();
-    }
+		// Draw
+		BeginDrawing();
+		ClearBackground(RAYWHITE);
+		Draw();
+		EndDrawing();
+	}
 
-    CloseWindow();
-    return 0;
+	CloseWindow();
+	return 0;
 }
