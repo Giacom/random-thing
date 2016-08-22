@@ -9,8 +9,8 @@
 const int mainScreenWidth = 800;
 const int mainScreenHeight = 450;
 
-int currentWindowWidth = mainScreenWidth;
-int currentWindowHeight = mainScreenHeight;
+int currentWindowWidth = 0;
+int currentWindowHeight = 0;
 
 const int sidePanelWidth = 100;
 const int sidePanelHeight = 100;
@@ -86,6 +86,9 @@ void TestButton(Button *button)
 
 int main()
 {
+	currentWindowWidth = mainScreenWidth;
+	currentWindowHeight = mainScreenHeight;
+
 	InitWindow(mainScreenWidth, mainScreenHeight, windowTitle);
 	SetTargetFPS(60);
 

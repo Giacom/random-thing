@@ -5,14 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 
-const int BTN_FONT_SIZE = 8;
-const int MAX_BUTTONS = 128;
-
 int buttonCount = 0;
 Button buttons[MAX_BUTTONS];
 
 void CreateButton(char *label, int x, int y, int width, int height, ButtonEvent onClick)
 {
+	// Possible improvement: Allocate this all on the heap.
 	Button button = (Button) {
 		.bounds = (Rectangle) {
 			.x = x, .y = y, .width = width, .height = height

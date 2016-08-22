@@ -4,6 +4,8 @@
 #include "raylib.h"
 
 #define MAX_BTN_LABEL_SIZE 255
+#define BTN_FONT_SIZE 8
+#define MAX_BUTTONS 128
 
 typedef struct Button Button;
 
