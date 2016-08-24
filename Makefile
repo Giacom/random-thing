@@ -8,7 +8,7 @@ LINUX_LIBS = -lraylib -lglfw3 -lGL -lopenal -lm -pthread -ldl -lX11 \
 WIN_LIBS = -lraylib -lglfw3 -lopengl32 -lopenal32 -lgdi32
 WIN_LIB_PATHS = -l C:\dev\libs # Linux users, put yours in /usr/local/lib
 
-ifeq (($OS),Windows_NT)
+ifeq ($(OS),Windows_NT)
 	LIBS = $(WIN_LIBS)
 else
 	LIBS = $(LINUX_LIBS)
