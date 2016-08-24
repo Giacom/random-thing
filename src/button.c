@@ -31,7 +31,7 @@ Button *GetButton(int index)
 
 void SetButtonLabel(Button *button, const char *label)
 {
-	strncpy(button->label, label, MAX_BTN_LABEL_SIZE);
+	strncpy(button->label, label, MAX_BTN_LABEL_SIZE - 1);
 }
 
 void DrawButton(struct Button *button)

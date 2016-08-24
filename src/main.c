@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "button.h"
 #include "helpers.h"
+#include "export.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -20,31 +21,50 @@ const char windowTitle[30] = "Shader Canvas";
 int droppedFilesCount;
 char **droppedFiles;
 
-Shader shader;
+Shader loadedShader;
 Texture2D loadedTexture;
+
+RenderTexture2D canvas;
+
+Rectangle dropZone;
 
 void Update()
 {
 	droppedFiles = GetDroppedFiles(&droppedFilesCount);
 
-	if (droppedFilesCount > 0) {
-		char *filePath = droppedFiles[0];
-		Image loadedImage = LoadImage(filePath);
+	if (!loadedTexture.id) {
+		if (droppedFilesCount > 0) {
+			char *filePath = droppedFiles[0];
+			Image loadedImage = LoadImage(filePath);
 
-		char title[255] = "Shader Canvas: ";
-		strncat(title, filePath, 255);
+			char title[255] = "Shader Canvas: ";
+			strncat(title, filePath, 254);
 
-		CloseWindow();
+			CloseWindow();
 
-		currentWindowWidth = loadedImage.width + sidePanelWidth;
-		currentWindowHeight = MAX(loadedImage.height, sidePanelHeight);
+			currentWindowWidth = loadedImage.width + sidePanelWidth;
+			currentWindowHeight = MAX(loadedImage.height, sidePanelHeight);
 
-		InitWindow(currentWindowWidth, currentWindowHeight, title);
+			InitWindow(currentWindowWidth, currentWindowHeight, title);
 
-		loadedTexture = LoadTextureFromImage(loadedImage);
-		UnloadImage(loadedImage);
+			canvas = LoadRenderTexture(loadedImage.width, loadedImage.height);
 
-		ClearDroppedFiles();
+			loadedTexture = LoadTextureFromImage(loadedImage);
+			UnloadImage(loadedImage);
+
+			ClearDroppedFiles();
+		}
+	} else {
+		if (droppedFilesCount > 1) {
+			char *filePathVert = droppedFiles[0];
+			char *filePathFrag = droppedFiles[1];
+
+			UnloadShader(loadedShader);
+
+			loadedShader = LoadShader(filePathVert, filePathFrag);
+
+			ClearDroppedFiles();
+		}
 	}
 
 	int i = 0;
@@ -61,27 +81,41 @@ void Draw()
 		DrawText(message, sidePanelWidth + mainScreenWidth / 2 - (20 * 16), mainScreenHeight / 2, 28, BLACK);
 	}
 
+	// Canvas
+
+	if (canvas.id) {
+		BeginTextureMode(canvas);
+		ClearBackground(RAYWHITE);
+		if (loadedShader.id) {
+			BeginShaderMode(loadedShader);
+		}
+		DrawTexture(loadedTexture, 0, 0, WHITE);
+		if (loadedShader.id) {
+			EndShaderMode();
+		}
+		EndTextureMode();
+
+		// Flipped due to OpenGL
+		DrawTextureRec(canvas.texture, (Rectangle){ 0, 0, canvas.texture.width, -canvas.texture.height }, (Vector2){ sidePanelWidth, 0 }, WHITE);
+	}
+
+	// Side panel
 	DrawRectangleGradient(0, 0, sidePanelWidth, currentWindowHeight, DARKGRAY, GRAY);
 
 	int i = 0;
 	while(GetButton(i) != NULL) {
 		DrawButton(GetButton(i++));
 	}
-
-	if (shader.id) {
-		BeginShaderMode(shader);
-	}
-	DrawTexture(loadedTexture, sidePanelWidth, 0, WHITE);
-	if (shader.id) {
-		EndShaderMode();
-	}
 }
 
-int counter = 0;
 
 void TestButton(Button *button)
 {
-	SetButtonLabel(button, FormatText("%i", ++counter));
+	if (canvas.id) {
+		SetButtonLabel(button, "Exported");
+		//loadedTexture = TestImage(canvas.texture);
+		ExportTexture(loadedTexture, true);
+	}
 }
 
 int main()
